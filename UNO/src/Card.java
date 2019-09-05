@@ -2,13 +2,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Card {
     int number;
@@ -63,33 +56,6 @@ public class Card {
                         break;
                 }
             }
-        }
-    }
-
-    public static void main(String[] args) {
-        ArrayList<Card> cards = new ArrayList<>();
-        ArrayList<String> colors = new ArrayList<>();
-        colors.add("red");
-        colors.add("blue");
-        colors.add("green");
-        colors.add("yellow");
-        colors.add("wild");
-        try (Stream<Path> walk = Files.walk(Paths.get("UNO/Res/"))) {
-
-            List<String> result = walk.map(Path::toString)
-                    .filter(f -> f.endsWith(".png")).collect(Collectors.toList());
-
-            for (String path : result) {
-                File newFile = new File(path);
-                String[] fls = newFile.getName().split("_");
-                if (colors.contains(fls[0])) {
-                    BufferedImage nextImage = ImageIO.read(newFile);
-                    cards.add(new Card(newFile.getName(), nextImage));
-                }
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

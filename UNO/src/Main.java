@@ -8,15 +8,44 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Main extends JPanel {
 
     public static final int WIDTH = 1200, HEIGHT = 800;
     private Timer timer;
+    ArrayList<Card> cards = new ArrayList<>();
+    ArrayList<String> colors = new ArrayList<>();
 
 
     public Main() {
+        colors.add("red");
+        colors.add("blue");
+        colors.add("green");
+        colors.add("yellow");
+        colors.add("wild");
+        try (Stream<Path> walk = Files.walk(Paths.get("UNO/Res/"))) {
+
+            java.util.List<String> result = walk.map(Path::toString)
+                    .filter(f -> f.endsWith(".png")).collect(Collectors.toList());
+
+            for (String path : result) {
+                File newFile = new File(path);
+                String[] fls = newFile.getName().split("_");
+                if (colors.contains(fls[0])) {
+                    BufferedImage nextImage = ImageIO.read(newFile);
+                    cards.add(new Card(newFile.getName(), nextImage));
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         String[] choices = {"1", "2", "3", "4"};
         String input = (String) JOptionPane.showInputDialog(null, "Choose now...",
                 "The Choice of a Lifetime", JOptionPane.QUESTION_MESSAGE, null, // Use
@@ -56,7 +85,7 @@ public class Main extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        ArrayList<String> testArrayList = new ArrayList<>();                                // creating array to create player
+        ArrayList<Card> testArrayList = new ArrayList<>();                                // creating array to create player
         Point2D center = new Point2D.Float(getWidth() / 2, getHeight() / 2);
         float radius = getWidth() / 4;
         float[] dist = {0.5f, 1f};
@@ -76,7 +105,6 @@ public class Main extends JPanel {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        testArrayList.add("BOB");
         Player testPlayer = new Player("Test", 1, testArrayList);
         testPlayer.draw(g2);
 
@@ -98,5 +126,9 @@ public class Main extends JPanel {
         });
     }
 
+    public int drawCard() {
+        int rand = (int) (Math.random() * cards.size());
+        return rand;
+    }
 }
 
