@@ -15,13 +15,14 @@ public class Card {
     String color;
     BufferedImage image;
     BufferedImage backImage;
-    ArrayList<String> colors = new ArrayList<>();
+    boolean drawTwo = false;
+    boolean reverse = false;
+    boolean skip = false;
+    boolean drawFour = false;
+    boolean colorChange = false;
+    boolean isWild = false;
 
     Card(String pictureName, BufferedImage image) {
-        colors.add("red");
-        colors.add("blue");
-        colors.add("green");
-        colors.add("yellow");
         this.image = image;
         try {
             File newFile = new File("UNO/Res/card_back_alt.png");
@@ -31,12 +32,37 @@ public class Card {
         }
         String[] strs = pictureName.split("\\.");
         String[] vals = strs[0].split("_");
-        if (colors.contains(vals[0]))
-            color = vals[0];
+        color = vals[0];
+        if (color.equals("wild"))
+            isWild = true;
         try {
             number = Integer.parseInt(vals[1]);
         } catch (NumberFormatException | NullPointerException nfe) {
             number = -1;
+            if (!color.equals("wild")) {
+                String secondVal = vals[1];
+                switch (secondVal) {
+                    case "picker":
+                        drawTwo = true;
+                        break;
+                    case "reverse":
+                        reverse = true;
+                        break;
+                    case "skip":
+                        skip = true;
+                        break;
+                }
+            } else {
+                String secondVal = vals[1];
+                switch (secondVal) {
+                    case "pick":
+                        drawFour = true;
+                        break;
+                    case "color":
+                        colorChange = true;
+                        break;
+                }
+            }
         }
     }
 
@@ -47,16 +73,19 @@ public class Card {
         colors.add("blue");
         colors.add("green");
         colors.add("yellow");
+        colors.add("wild");
         try (Stream<Path> walk = Files.walk(Paths.get("UNO/Res/"))) {
 
             List<String> result = walk.map(Path::toString)
                     .filter(f -> f.endsWith(".png")).collect(Collectors.toList());
 
             for (String path : result) {
-//                System.out.println(str);
                 File newFile = new File(path);
-                BufferedImage nextImage = ImageIO.read(newFile);
-                cards.add(new Card(newFile.getName(), nextImage));
+                String[] fls = newFile.getName().split("_");
+                if (colors.contains(fls[0])) {
+                    BufferedImage nextImage = ImageIO.read(newFile);
+                    cards.add(new Card(newFile.getName(), nextImage));
+                }
             }
 
         } catch (IOException e) {

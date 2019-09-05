@@ -3,11 +3,11 @@ import java.util.ArrayList;
 
 public class Player {
     private String name;
-    private ArrayList<String> cards;
+    private ArrayList<Card> cards;
     private int position; // 1,2,3,4
 
-    Player(String n, int pos, ArrayList<String> cds) {
-        cards.addAll(cds);
+    Player(String n, int pos, ArrayList<Card> cds) {
+//        cards.addAll(cds);
         name = n;
         position = pos;
     }
@@ -16,7 +16,7 @@ public class Player {
         return name;
     }
 
-    public ArrayList<String> getCards() {
+    public ArrayList<Card> getCards() {
         return cards;
     }
 
