@@ -91,9 +91,5 @@ public class Card {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        for (Card card : cards) {
-            System.out.print(card.color + " " + card.number);
-            System.out.println();
-        }
     }
 }
