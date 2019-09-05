@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Main extends JPanel {
 
@@ -55,6 +56,7 @@ public class Main extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+        ArrayList<String> testArrayList = new ArrayList<>();                                // creating array to create player
         Point2D center = new Point2D.Float(getWidth() / 2, getHeight() / 2);
         float radius = getWidth() / 4;
         float[] dist = {0.5f, 1f};
@@ -70,9 +72,14 @@ public class Main extends JPanel {
             Image image = backImage;
             ImageObserver imageObserver = (img, infoflags, x, y, width, height) -> false;
             g2.drawImage(image, 0, 0, 110, 150, imageObserver);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+        testArrayList.add("BOB");
+        Player testPlayer = new Player("Test", 1, testArrayList);
+        testPlayer.draw(g2);
+
     }
 
     public void setKeyListener() {

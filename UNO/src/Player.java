@@ -7,7 +7,7 @@ public class Player {
     private int position; // 1,2,3,4
 
     Player(String n, int pos, ArrayList<String> cds) {
-        cards.addAll(cds);
+//        cards.addAll(cds);
         name = n;
         position = pos;
     }
@@ -29,6 +29,7 @@ public class Player {
     }
 
     public void draw(Graphics2D g2) {
-
+        g2.setColor(new Color(133, 94, 66));
+//        g2.fillRect();
     }
 }
