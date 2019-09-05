@@ -14,6 +14,7 @@ public class Card {
     int number;
     String color;
     BufferedImage image;
+    BufferedImage backImage;
     ArrayList<String> colors = new ArrayList<>();
 
     Card(String pictureName, BufferedImage image) {
@@ -22,6 +23,12 @@ public class Card {
         colors.add("green");
         colors.add("yellow");
         this.image = image;
+        try {
+            File newFile = new File("UNO/Res/card_back_alt.png");
+            backImage = ImageIO.read(newFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         String[] strs = pictureName.split("\\.");
         String[] vals = strs[0].split("_");
         if (colors.contains(vals[0]))
