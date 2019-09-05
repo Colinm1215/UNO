@@ -1,20 +1,21 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
+import java.io.File;
+import java.io.IOException;
 
 public class Main extends JPanel {
 
     public static final int WIDTH = 1200, HEIGHT = 800;
     private Timer timer;
-    boolean doB = false;
 
 
     public Main() {
-        timer = new Timer(1000 / 60, e -> update());
-        timer.start();
-        setKeyListener();
         String[] choices = {"1", "2", "3", "4"};
         String input = (String) JOptionPane.showInputDialog(null, "Choose now...",
                 "The Choice of a Lifetime", JOptionPane.QUESTION_MESSAGE, null, // Use
@@ -22,6 +23,9 @@ public class Main extends JPanel {
                 // icon
                 choices, // Array of choices
                 choices[1]); // Initial choice
+        timer = new Timer(1000 / 60, e -> update());
+        timer.start();
+        setKeyListener();
     }
 
 
@@ -35,8 +39,8 @@ public class Main extends JPanel {
         Main panel = new Main();
         panel.setSize(WIDTH, HEIGHT);
 
-//        panel.setFocusable(true);
-//        panel.grabFocus();
+        panel.setFocusable(true);
+        panel.grabFocus();
 
         window.add(panel);
         window.setVisible(true);
@@ -60,9 +64,14 @@ public class Main extends JPanel {
         g2.setPaint(p);
         g2.fillRect(0, 0, getWidth(), getHeight());
         g2.setPaint(null);
-        if (doB) {
-            g2.setColor(Color.black);
-            g2.fillRect(0, 0, 100, 100);
+        try {
+            File newFile = new File("UNO/Res/card_back_alt.png");
+            BufferedImage backImage = ImageIO.read(newFile);
+            Image image = backImage;
+            ImageObserver imageObserver = (img, infoflags, x, y, width, height) -> false;
+            g2.drawImage(image, 0, 0, 110, 150, imageObserver);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -70,17 +79,14 @@ public class Main extends JPanel {
         addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
-
             }
 
             @Override
             public void keyPressed(KeyEvent e) {
-                doB = true;
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
-
             }
         });
     }
