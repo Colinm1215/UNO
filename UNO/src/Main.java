@@ -1,10 +1,7 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
@@ -31,7 +28,6 @@ public class Main extends JPanel {
     ArrayList<Card> discardPile = new ArrayList<>();
     ArrayList<Player> players = new ArrayList<>();
     ImageObserver imageObserver = (img, infoflags, x, y, width, height) -> false;
-    int centerx = 700;
 
 
     public Main() {
@@ -51,7 +47,6 @@ public class Main extends JPanel {
                 if (colors.contains(fls[0])) {
                     BufferedImage nextImage = ImageIO.read(newFile);
                     drawPile.add(new Card(newFile.getName(), nextImage));
-                    discardPile.add(new Card(newFile.getName(), nextImage));
                 }
             }
 
@@ -65,18 +60,15 @@ public class Main extends JPanel {
                 // icon
                 choices, // Array of choices
                 choices[1]); // Initial choice
-        System.out.println(input);
-        ArrayList<Card> cards1 = new ArrayList<>();
-        for (int i = 0; i < 7; i++) {
-            cards1.add(drawPile.get(drawCard()));
+        int curPos = 1;
+        for (int i = 0; i < Integer.parseInt(input); i++) {
+            ArrayList<Card> cards1 = new ArrayList<>();
+            for (int c = 0; c < 7; c++) {
+                cards1.add(drawPile.get(drawCard()));
+            }
+            players.add(new Player("Player " + curPos, curPos, cards1));
+            curPos++;
         }
-        for (Card card : cards1) {
-            System.out.println(card.color);
-        }
-        players.add(new Player("Player 1", 1, cards1));
-        players.add(new Player("Player 2", 2, cards1));
-        players.add(new Player("Player 3", 3, cards1));
-        players.add(new Player("Player 3", 4, cards1));
         timer = new Timer(1000 / 60, e -> update());
         timer.start();
         setKeyListener();
@@ -140,7 +132,6 @@ public class Main extends JPanel {
 
             @Override
             public void keyReleased(KeyEvent e) {
-                System.out.println(centerx);
             }
         });
     }
@@ -153,6 +144,19 @@ public class Main extends JPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
+                int start = 720 - (((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) * 3) / 4);
+                int index = -1;
+                if (e.getY() > Main.HEIGHT - 180) {
+                    if (e.getX() > start && e.getX() < start + ((Main.CARDWIDTH / 4) * 13)) {
+                        index = (e.getX() - start) / Player.cardW;
+                    } else if (e.getX() > start + ((Main.CARDWIDTH / 4) * 13) && e.getX() < start + ((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) {
+                        index = 6;
+                    }
+                }
+                for (Player player : players) {
+                    if (player.getPos() == 1)
+                        player.setHighlightIndex(index);
+                }
             }
 
             @Override
@@ -168,11 +172,20 @@ public class Main extends JPanel {
 
             }
         });
+
+        addMouseMotionListener(new MouseMotionListener() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+            }
+        });
     }
 
     public int drawCard() {
-        int rand = (int) (Math.random() * drawPile.size());
-        return rand;
+        return (int) (Math.random() * drawPile.size());
     }
 }
 

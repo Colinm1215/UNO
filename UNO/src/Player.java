@@ -8,7 +8,9 @@ public class Player {
     private ArrayList<Card> cards = new ArrayList<>();
     private Point cardsPosition;
     private Point identifierPosition;
-    private int pos = 1;
+    public static int cardW = Main.CARDWIDTH / 4;
+    private int pos;
+    private int highlightIndex = -1;
 
 
     Player(String n, int pos, ArrayList<Card> cds) {
@@ -57,25 +59,49 @@ public class Player {
 
     public void draw(Graphics2D g2) {
         g2.setColor(Color.BLACK);
-        g2.fillRect(cardsPosition.x - (((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) * 3) / 4), cardsPosition.y, ((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH, Main.CARDHEIGHT);
+//        g2.fillRect(cardsPosition.x - (((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) * 3) / 4), cardsPosition.y, ((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH, Main.CARDHEIGHT);
         g2.fillRect(identifierPosition.x, identifierPosition.y, 100, Main.CARDHEIGHT);
         g2.fillRect(identifierPosition.x + 110, identifierPosition.y, 100, Main.CARDHEIGHT);
         int cardNum = 14;
         if (cards.size() < 14)
             cardNum = cards.size();
         int width = ((Main.CARDWIDTH / 4) * 13);
-        int cardW = width / (cardNum - 1);
+        cardW = width / (cardNum - 1);
         int i = 0;
-        for (int x = cardsPosition.x - (((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) * 3) / 4); x < cardsPosition.x + ((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH; x += cardW) {
+        int savedX = -1;
+        Image savedImage = null;
+        for (int x = cardsPosition.x - (((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) * 3) / 4); x <= cardsPosition.x + 10; x += cardW) {
             Image image;
             if (pos == 1)
                 image = cards.get(i).image;
             else
                 image = cards.get(i).backImage;
             g2.drawImage(image, x, cardsPosition.y, Main.CARDWIDTH, Main.CARDHEIGHT, imageObserver);
+            if (i == highlightIndex) {
+                savedImage = image;
+                savedX = x;
+            }
             i++;
-            if (i >= cards.size())
+            if (i >= cards.size() || i >= 14)
                 break;
         }
+        if (highlightIndex != -1 && pos == 1) {
+            if (savedImage != null) {
+                g2.drawImage(savedImage, savedX, cardsPosition.y, Main.CARDWIDTH, Main.CARDHEIGHT, imageObserver);
+                g2.setColor(Color.CYAN);
+                Stroke stroke = g2.getStroke();
+                g2.setStroke(new BasicStroke(4));
+                g2.drawRect(savedX, cardsPosition.y, Main.CARDWIDTH, Main.CARDHEIGHT);
+                g2.setStroke(stroke);
+            }
+        }
+    }
+
+    public void setHighlightIndex(int highlightIndex) {
+        this.highlightIndex = highlightIndex;
+    }
+
+    public int getPos() {
+        return pos;
     }
 }
