@@ -3,6 +3,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
@@ -17,10 +19,19 @@ import java.util.stream.Stream;
 
 public class Main extends JPanel {
 
-    public static final int WIDTH = 1200, HEIGHT = 800;
+    public static final int WIDTH = 1400, HEIGHT = 800;
     private Timer timer;
-    ArrayList<Card> cards = new ArrayList<>();
+    public static final int PILEY = 325;
+    public static final int DRAWX = 720;
+    public static final int DISCARDX = 715 - 115;
     ArrayList<String> colors = new ArrayList<>();
+    public static final int CARDWIDTH = 110;
+    public static final int CARDHEIGHT = 150;
+    ArrayList<Card> drawPile = new ArrayList<>();
+    ArrayList<Card> discardPile = new ArrayList<>();
+    ArrayList<Player> players = new ArrayList<>();
+    ImageObserver imageObserver = (img, infoflags, x, y, width, height) -> false;
+    int centerx = 700;
 
 
     public Main() {
@@ -39,7 +50,8 @@ public class Main extends JPanel {
                 String[] fls = newFile.getName().split("_");
                 if (colors.contains(fls[0])) {
                     BufferedImage nextImage = ImageIO.read(newFile);
-                    cards.add(new Card(newFile.getName(), nextImage));
+                    drawPile.add(new Card(newFile.getName(), nextImage));
+                    discardPile.add(new Card(newFile.getName(), nextImage));
                 }
             }
 
@@ -53,9 +65,22 @@ public class Main extends JPanel {
                 // icon
                 choices, // Array of choices
                 choices[1]); // Initial choice
+        System.out.println(input);
+        ArrayList<Card> cards1 = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            cards1.add(drawPile.get(drawCard()));
+        }
+        for (Card card : cards1) {
+            System.out.println(card.color);
+        }
+        players.add(new Player("Player 1", 1, cards1));
+        players.add(new Player("Player 2", 2, cards1));
+        players.add(new Player("Player 3", 3, cards1));
+        players.add(new Player("Player 3", 4, cards1));
         timer = new Timer(1000 / 60, e -> update());
         timer.start();
         setKeyListener();
+        setMouseListener();
     }
 
 
@@ -85,8 +110,7 @@ public class Main extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        ArrayList<Card> testArrayList = new ArrayList<>();                                // creating array to create player
-        Point2D center = new Point2D.Float(getWidth() / 2, getHeight() / 2);
+        Point2D center = new Point2D.Float(715, 325 + CARDHEIGHT / 2);
         float radius = getWidth() / 4;
         float[] dist = {0.5f, 1f};
         Color[] colors = {Color.ORANGE, Color.RED};
@@ -95,19 +119,13 @@ public class Main extends JPanel {
         g2.setPaint(p);
         g2.fillRect(0, 0, getWidth(), getHeight());
         g2.setPaint(null);
-        try {
-            File newFile = new File("UNO/Res/card_back_alt.png");
-            BufferedImage backImage = ImageIO.read(newFile);
-            Image image = backImage;
-            ImageObserver imageObserver = (img, infoflags, x, y, width, height) -> false;
-            g2.drawImage(image, 0, 0, 110, 150, imageObserver);
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        for (Player player : players) {
+            player.draw(g2);
         }
-        Player testPlayer = new Player("Test", 1, testArrayList);
-        testPlayer.draw(g2);
-
+        if (discardPile.size() > 0)
+            g2.drawImage(discardPile.get(discardPile.size() - 1).image, DISCARDX, PILEY, CARDWIDTH, CARDHEIGHT, imageObserver);
+        if (drawPile.size() > 0)
+            g2.drawImage(drawPile.get(drawPile.size() - 1).backImage, DRAWX, PILEY, CARDWIDTH, CARDHEIGHT, imageObserver);
     }
 
     public void setKeyListener() {
@@ -122,12 +140,38 @@ public class Main extends JPanel {
 
             @Override
             public void keyReleased(KeyEvent e) {
+                System.out.println(centerx);
+            }
+        });
+    }
+
+    public void setMouseListener() {
+        addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
             }
         });
     }
 
     public int drawCard() {
-        int rand = (int) (Math.random() * cards.size());
+        int rand = (int) (Math.random() * drawPile.size());
         return rand;
     }
 }
