@@ -15,7 +15,7 @@ public class Card {
     boolean colorChange = false;
     boolean isWild = false;
 
-    Card(String pictureName, BufferedImage image) {
+    Card(String pictureName) {
         this.image = image;
         try {
             File newFile = new File("UNO/Res/card_back_alt.png");
