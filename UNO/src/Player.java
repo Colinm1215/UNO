@@ -8,7 +8,6 @@ public class Player {
     private ArrayList<Card> cards = new ArrayList<>();
     private Point cardsPosition;
     private Point identifierPosition;
-    public int cardW = Main.CARDWIDTH / 4;
     private int pos;
     private int highlightIndex = -1;
     int selectionIndex = -1;
@@ -97,7 +96,6 @@ public class Player {
                 selectionIndex = i;
                 savedImage = image;
                 savedX = x;
-                System.out.println("FOUND" + highlightIndex);
             }
             if (highlightIndex == -1)
                 selectionIndex = -1;

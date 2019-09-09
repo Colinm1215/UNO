@@ -60,4 +60,16 @@ public class Card {
             }
         }
     }
+
+    public void changeColor(String color) {
+        if (this.color.equals("wild") && colorChange) {
+            this.color = color;
+            colorChange = false;
+            try {
+                File imageFile = new File("UNO/Res/" + color + "_0.png");
+                this.image = ImageIO.read(imageFile);
+            } catch (IOException e) {
+            }
+        }
+    }
 }
