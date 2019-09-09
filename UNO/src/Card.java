@@ -16,8 +16,10 @@ public class Card {
     boolean isWild = false;
 
     Card(String pictureName) {
-        this.image = image;
+//        this.image = image;
         try {
+            File imageFile = new File("UNO/Res/" + pictureName);
+            this.image = ImageIO.read(imageFile);
             File newFile = new File("UNO/Res/card_back_alt.png");
             backImage = ImageIO.read(newFile);
         } catch (IOException e) {

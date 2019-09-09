@@ -1,18 +1,9 @@
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Main extends JPanel {
 
@@ -28,6 +19,8 @@ public class Main extends JPanel {
     ArrayList<Card> discardPile = new ArrayList<>();
     ArrayList<Player> players = new ArrayList<>();
     ImageObserver imageObserver = (img, infoflags, x, y, width, height) -> false;
+    MoveButton moveButton = new MoveButton();
+    Rectangle drawArea = new Rectangle(DRAWX, PILEY, CARDWIDTH, CARDHEIGHT);
 
 
     public Main() {
@@ -63,14 +56,15 @@ public class Main extends JPanel {
                 choices[1]); // Initial choice
         int curPos = 1;
         for (int i = 0; i < Integer.parseInt(input); i++) {
-            ArrayList<Card> cards1 = new ArrayList<>();
+            ArrayList<Card> cardsTemp = new ArrayList<>();
             for (int c = 0; c < 7; c++) {
                 Card card = drawPile.remove(drawCard());
-                cards1.add(card);
+                cardsTemp.add(card);
             }
-            players.add(new Player("Player " + curPos, curPos, cards1));
+            players.add(new Player("Player " + curPos, curPos, cardsTemp));
             curPos++;
         }
+        discardPile.add(drawPile.remove(drawCard()));
         timer = new Timer(1000 / 60, e -> update());
         timer.start();
         setKeyListener();
@@ -120,9 +114,7 @@ public class Main extends JPanel {
             g2.drawImage(discardPile.get(discardPile.size() - 1).image, DISCARDX, PILEY, CARDWIDTH, CARDHEIGHT, imageObserver);
         if (drawPile.size() > 0)
             g2.drawImage(drawPile.get(drawPile.size() - 1).backImage, DRAWX, PILEY, CARDWIDTH, CARDHEIGHT, imageObserver);
-
-
-        boolean on = false;
+        moveButton.draw(g2);
     }
 
     public void setKeyListener() {
@@ -149,23 +141,40 @@ public class Main extends JPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                int start = 720 - (((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) * 3) / 4);
-                int index = -1;
-                if (e.getY() > Main.HEIGHT - 180) {
-                    if (e.getX() > start && e.getX() < start + ((Main.CARDWIDTH / 4) * 13)) {
-                        index = (e.getX() - start) / Player.cardW;
-                    } else if (e.getX() > start + ((Main.CARDWIDTH / 4) * 13) && e.getX() < start + ((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) {
-                        index = 6;
+                Player curPlayer = players.get(0);
+                for (Player player : players) {
+                    if (player.getPos() == 1) {
+                        curPlayer = player;
+                        break;
                     }
                 }
-                for (Player player : players) {
-                    if (player.getPos() == 1)
-                        player.setHighlightIndex(index);
+
+                highlightCard(e.getX(), e.getY(), curPlayer);
+
+                if (drawArea.contains(e.getX(), e.getY())) {
+                    try {
+                        curPlayer.drawCard(drawPile.remove(drawCard()));
+                    } catch (IndexOutOfBoundsException err) {
+                    }
+                }
+
+                if (moveButton.rect.contains(e.getX(), e.getY())) {
+                    Card selectedCard = curPlayer.sendCard();
+                    if (selectedCard != null)
+                        discardPile.add(selectedCard);
+                    moveButton.clicked = true;
+                    if (moveButton.hover)
+                        moveButton.hover = false;
                 }
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
+                if (moveButton.clicked) {
+                    moveButton.clicked = false;
+                    if (moveButton.rect.contains(e.getX(), e.getY()))
+                        moveButton.hover = true;
+                }
             }
 
             @Override
@@ -185,6 +194,10 @@ public class Main extends JPanel {
 
             @Override
             public void mouseMoved(MouseEvent e) {
+                if (moveButton.rect.contains(e.getX(), e.getY()) && !moveButton.clicked)
+                    moveButton.hover = true;
+                else if (moveButton.hover || moveButton.clicked)
+                    moveButton.hover = false;
             }
         });
     }
@@ -229,6 +242,43 @@ public class Main extends JPanel {
 
     public int drawCard() {
         return (int) (Math.random() * drawPile.size());
+    }
+
+    public void highlightCard(int x, int y, Player curPlayer) {
+//        Player curPlayer = players.get(0);
+//        for (Player player : players) {
+//            if (player.getPos() == 1) {
+//                curPlayer = player;
+//                break;
+//            }
+//        }
+        int start = 720 - (((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) * 3) / 4);
+        int index = -1;
+        ArrayList<Card> cards = curPlayer.getCards();
+        int width = ((Main.CARDWIDTH / 4) * 13);
+        int cardNum = 14;
+        int cardW = Main.CARDWIDTH / 4;
+        if (cards.size() < 14)
+            cardNum = cards.size();
+        if (cards.size() < 7)
+            cardNum = 7;
+        if (cardNum - 1 > 0)
+            cardW = width / (cardNum - 1);
+        if (cardW > Main.CARDWIDTH / 4 || cardNum - 1 <= 0)
+            cardW = Main.CARDWIDTH / 4;
+
+        if (y > Main.HEIGHT - 180) {
+            if (x > start && x < start + (cardW * cards.size())) {
+                index = (x - start) / cardW;
+                if (index >= curPlayer.getCards().size())
+                    index = curPlayer.getCards().size() - 1;
+                else if (index < 0)
+                    index = 0;
+            } else if (x > start + (cardW * cards.size()) && x < 720 + Main.CARDWIDTH) {
+                index = curPlayer.getCards().size() - 1;
+            }
+        }
+        curPlayer.setHighlightIndex(index);
     }
 }
 
