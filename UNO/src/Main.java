@@ -21,6 +21,8 @@ public class Main extends JPanel {
     ImageObserver imageObserver = (img, infoflags, x, y, width, height) -> false;
     MoveButton moveButton = new MoveButton();
     Rectangle drawArea = new Rectangle(DRAWX, PILEY, CARDWIDTH, CARDHEIGHT);
+    public static final PictureTaker pictureTaker = new PictureTaker();
+    public static final JFrame window = new JFrame();
 
 
     public Main() {
@@ -74,7 +76,6 @@ public class Main extends JPanel {
 
     public static void main(String[] args) {
 
-        JFrame window = new JFrame();
         window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         window.setBounds(0, 0, WIDTH, HEIGHT + 22); //(x, y, w, h) 22 due to title bar.

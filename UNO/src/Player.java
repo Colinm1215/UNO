@@ -1,6 +1,8 @@
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.ImageObserver;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class Player {
     private String name;
@@ -11,6 +13,7 @@ public class Player {
     private int pos;
     private int highlightIndex = -1;
     int selectionIndex = -1;
+    Image playerImage = null;
 
 
     Player(String n, int pos, ArrayList<Card> cds) {
@@ -18,6 +21,30 @@ public class Player {
         name = n;
         setPosition(pos);
         this.pos = pos;
+        Object[] options = {"Yes, please",
+                "No, thanks"};
+        int op = JOptionPane.showOptionDialog(Main.window,
+                "Would you like some green eggs to go "
+                        + "with that ham?",
+                "A Silly Question",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+        if (op == 0) {
+            for (int i = 1; i < 4; i++) {
+                JOptionPane.showMessageDialog(Main.window,
+                        "Eggs are not supposed to be green.",
+                        "A plain message",
+                        JOptionPane.PLAIN_MESSAGE);
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                }
+            }
+            playerImage = Main.pictureTaker.capture();
+        }
     }
 
     public String getName() {
@@ -59,8 +86,12 @@ public class Player {
 
     public void draw(Graphics2D g2) {
         g2.setColor(Color.BLACK);
-        g2.fillRect(identifierPosition.x, identifierPosition.y, 100, Main.CARDHEIGHT);
 //        g2.fillRect(identifierPosition.x + 110, identifierPosition.y, 100, Main.CARDHEIGHT);
+        if (playerImage == null)
+            g2.fillRect(identifierPosition.x, identifierPosition.y, 100, Main.CARDHEIGHT);
+        else {
+            g2.drawImage(playerImage, identifierPosition.x, identifierPosition.y, 100, Main.CARDHEIGHT, imageObserver);
+        }
         g2.setFont(new Font("serif", Font.PLAIN, 40));
         g2.drawString(Integer.toString(cards.size()), identifierPosition.x + 110 + 25, identifierPosition.y + (Main.CARDHEIGHT / 2));
 
