@@ -24,26 +24,47 @@ public class Player {
         Object[] options = {"Yes, please",
                 "No, thanks"};
         int op = JOptionPane.showOptionDialog(Main.window,
-                "Would you like some green eggs to go "
-                        + "with that ham?",
-                "A Silly Question",
+                "Would you like to take a photo for player identification?",
+                "Photo for " + name,
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null,
                 options,
-                options[0]);
+                options[1]);
         if (op == 0) {
+            JFrame frame = new JFrame(name);
+            frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+            frame.setBounds(0, 0, 100, 100 + 22); //(x, y, w, h) 22 due to title bar.
+
+            JPanel panel = new JPanel();
+            panel.setSize(100, 100);
+            JLabel nameLabel = new JLabel(name);
+            JLabel label = new JLabel("0");
+            panel.add(label);
+
+            panel.setFocusable(true);
+            panel.grabFocus();
+
+            frame.add(panel);
+            frame.setResizable(false);
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
             for (int i = 1; i < 4; i++) {
-                JOptionPane.showMessageDialog(Main.window,
-                        "Eggs are not supposed to be green.",
-                        "A plain message",
-                        JOptionPane.PLAIN_MESSAGE);
                 try {
+                    label.setText(Integer.toString(i));
                     TimeUnit.SECONDS.sleep(1);
                 } catch (InterruptedException e) {
                 }
             }
+            frame.setVisible(false);
+            frame.dispose();
             playerImage = Main.pictureTaker.capture();
+            if (playerImage != null)
+                JOptionPane.showMessageDialog(frame,
+                        "Photo has been taken for " + name,
+                        "Confirmation",
+                        JOptionPane.PLAIN_MESSAGE);
         }
     }
 
@@ -86,14 +107,19 @@ public class Player {
 
     public void draw(Graphics2D g2) {
         g2.setColor(Color.BLACK);
-//        g2.fillRect(identifierPosition.x + 110, identifierPosition.y, 100, Main.CARDHEIGHT);
-        if (playerImage == null)
-            g2.fillRect(identifierPosition.x, identifierPosition.y, 100, Main.CARDHEIGHT);
-        else {
-            g2.drawImage(playerImage, identifierPosition.x, identifierPosition.y, 100, Main.CARDHEIGHT, imageObserver);
-        }
         g2.setFont(new Font("serif", Font.PLAIN, 40));
-        g2.drawString(Integer.toString(cards.size()), identifierPosition.x + 110 + 25, identifierPosition.y + (Main.CARDHEIGHT / 2));
+//        g2.fillRect(identifierPosition.x + 110, identifierPosition.y, 100, Main.CARDHEIGHT);
+        if (playerImage == null) {
+            g2.fillRect(identifierPosition.x, identifierPosition.y, 200, Main.CARDHEIGHT);
+            g2.setColor(Color.white);
+            g2.drawString(name, identifierPosition.x + 25, identifierPosition.y + (Main.CARDHEIGHT / 2));
+        }
+        else {
+            g2.drawImage(playerImage, identifierPosition.x, identifierPosition.y, 200, Main.CARDHEIGHT, imageObserver);
+        }
+        g2.setColor(Color.BLACK);
+        g2.setFont(new Font("serif", Font.PLAIN, 40));
+        g2.drawString(Integer.toString(cards.size()), identifierPosition.x + 210 + 25, identifierPosition.y + (Main.CARDHEIGHT / 2));
 
         int width = ((Main.CARDWIDTH / 4) * 13);
         int cardNum = 14;
