@@ -20,9 +20,11 @@ public class Main extends JPanel {
     ArrayList<Player> players = new ArrayList<>();
     ImageObserver imageObserver = (img, infoflags, x, y, width, height) -> false;
     MoveButton moveButton = new MoveButton();
+    GameLogic gameLogic = new GameLogic();
     Rectangle drawArea = new Rectangle(DRAWX, PILEY, CARDWIDTH, CARDHEIGHT);
     public static final PictureTaker pictureTaker = new PictureTaker();
     public static final JFrame window = new JFrame();
+    Main main = this;
 
 
     public Main() {
@@ -60,13 +62,12 @@ public class Main extends JPanel {
         for (int i = 0; i < Integer.parseInt(input); i++) {
             ArrayList<Card> cardsTemp = new ArrayList<>();
             for (int c = 0; c < 7; c++) {
-                Card card = drawPile.remove(drawCard());
+                Card card = drawCard();
                 cardsTemp.add(card);
             }
             players.add(new Player("Player " + curPos, curPos, cardsTemp));
             curPos++;
         }
-        discardPile.add(drawPile.remove(drawCard()));
         timer = new Timer(1000 / 60, e -> update());
         timer.start();
         setKeyListener();
@@ -116,6 +117,8 @@ public class Main extends JPanel {
         if (drawPile.size() > 0)
             g2.drawImage(drawPile.get(drawPile.size() - 1).backImage, DRAWX, PILEY, CARDWIDTH, CARDHEIGHT, imageObserver);
         moveButton.draw(g2);
+
+        gameLogic.draw(g2);
     }
 
     public void setKeyListener() {
@@ -130,6 +133,14 @@ public class Main extends JPanel {
 
             @Override
             public void keyReleased(KeyEvent e) {
+                for (Player p : players) {
+                    if (p.getPos() == 1) {
+                        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                            p.showCards = true;
+                            break;
+                        }
+                    }
+                }
             }
         });
     }
@@ -144,28 +155,42 @@ public class Main extends JPanel {
             public void mousePressed(MouseEvent e) {
                 Player curPlayer = players.get(0);
                 for (Player player : players) {
+                    System.out.println(player.getPos());
                     if (player.getPos() == 1) {
                         curPlayer = player;
                         break;
                     }
                 }
+                System.out.println(curPlayer.getPos());
+                Card selectedCard = curPlayer.getHighlightedCard();
 
                 highlightCard(e.getX(), e.getY(), curPlayer);
 
                 if (drawArea.contains(e.getX(), e.getY())) {
                     try {
-                        curPlayer.drawCard(drawPile.remove(drawCard()));
+                        curPlayer.drawCard(drawCard());
                     } catch (IndexOutOfBoundsException err) {
                     }
                 }
 
                 if (moveButton.rect.contains(e.getX(), e.getY())) {
-                    Card selectedCard = curPlayer.sendCard();
-                    if (selectedCard != null)
-                        discardPile.add(selectedCard);
+                    if (selectedCard != null) {
+                        if (gameLogic.cardCheck(selectedCard, discardPile.get(discardPile.size()-1), players, main)) {
+                            selectedCard = curPlayer.sendCard();
+                            discardPile.add(selectedCard);
+                            gameLogic.rotPlayers(players);
+                        }
+                    }
+
                     moveButton.clicked = true;
                     if (moveButton.hover)
                         moveButton.hover = false;
+                }
+
+                if (discardPile.get(discardPile.size()-1).colorChange || discardPile.get(discardPile.size()-1).isWild) {
+                    String str = gameLogic.containsButton(new Point(e.getX(), e.getY()));
+                    if (str != null)
+                        discardPile.get(discardPile.size()-1).changeColor(str);
                 }
             }
 
@@ -234,6 +259,7 @@ public class Main extends JPanel {
             drawPile.add(new Card("blue_skip.png"));
             drawPile.add(new Card("yellow_skip.png"));
         }
+        discardPile.add(drawCard());
         for (int i = 0; i < 4; i++) {
             drawPile.add(new Card("wild_color_changer.png"));
             drawPile.add(new Card("wild_pick_four.png"));
@@ -241,8 +267,8 @@ public class Main extends JPanel {
 
     }
 
-    public int drawCard() {
-        return (int) (Math.random() * drawPile.size());
+    public Card drawCard() {
+        return drawPile.get((int)(Math.random() * drawPile.size()));
     }
 
     public void highlightCard(int x, int y, Player curPlayer) {

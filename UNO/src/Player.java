@@ -4,6 +4,8 @@ import java.awt.image.ImageObserver;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+// game logic
+
 public class Player {
     private String name;
     ImageObserver imageObserver = (img, infoflags, x, y, width, height) -> false;
@@ -14,6 +16,7 @@ public class Player {
     private int highlightIndex = -1;
     int selectionIndex = -1;
     Image playerImage = null;
+    boolean showCards = false;
 
 
     Player(String n, int pos, ArrayList<Card> cds) {
@@ -85,6 +88,8 @@ public class Player {
     }
 
     public void setPosition(int pos) {
+        this.pos = pos;
+        showCards = false;
         switch (pos) {
             case 1:
                 cardsPosition = new Point(720, Main.HEIGHT - 180);
@@ -144,7 +149,7 @@ public class Player {
 //        cardsPosition.x+Main.CARDWIDTH
         for (int x = cardsPosition.x - (((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) * 3) / 4); x <= cardsPosition.x + (cardW * cards.size()); x += cardW) {
             Image image;
-            if (pos == 1)
+            if (pos == 1 && showCards)
                 image = cards.get(i).image;
             else
                 image = cards.get(i).backImage;
@@ -182,6 +187,13 @@ public class Player {
 
     public void drawCard(Card card) {
         cards.add(card);
+    }
+
+    public Card getHighlightedCard() {
+        if (selectionIndex != -1) {
+            return cards.get(selectionIndex);
+        }
+        return null;
     }
 
     public Card sendCard() {
