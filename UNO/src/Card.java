@@ -66,6 +66,9 @@ public class Card {
             if (this.color.equals("wild") && colorChange) {
                 this.color = color;
                 this.number = 0;
+                this.isWild = false;
+                this.colorChange = false;
+                this.drawFour = false;
                 colorChange = false;
                 try {
                     File imageFile = new File("UNO/Res/" + color + "_0.png");

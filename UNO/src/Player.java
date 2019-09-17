@@ -24,8 +24,7 @@ public class Player {
         name = n;
         setPosition(pos);
         this.pos = pos;
-        Object[] options = {"Yes, please",
-                "No, thanks"};
+        Object[] options = {"No, thanks", "Yes, please"};
         int op = JOptionPane.showOptionDialog(Main.window,
                 "Would you like to take a photo for player identification?",
                 "Photo for " + name,
@@ -34,7 +33,7 @@ public class Player {
                 null,
                 options,
                 options[1]);
-        if (op == 0) {
+        if (op == 1) {
             JFrame frame = new JFrame(name);
             frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 

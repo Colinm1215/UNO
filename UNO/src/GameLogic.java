@@ -1,25 +1,34 @@
-import org.w3c.dom.css.Rect;
-
+import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
-import java.lang.reflect.Array;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class GameLogic {
-    private boolean changingColor;
-    private ArrayList<Card> discardPile;
+    boolean changingColor;
+    boolean drawing;
     private Rectangle red= new Rectangle(428, 449, 100, 80);
     private Rectangle yellow = new Rectangle(576, 449, 100, 80);
     private Rectangle green = new Rectangle(724, 449, 100, 80);
     private Rectangle blue = new Rectangle(872, 449, 100, 80);
     boolean reverse = false;
     boolean skip = false;
+    int savedDraw = 0;
 
     public GameLogic() {}
 
-    public boolean cardCheck(Card input, Card topCard, ArrayList<Player> players, Main main) {
+    public boolean cardCheck(Card input, Card topCard, ArrayList<Player> players, Main main, MouseEvent e) {
         System.out.println(input.number);
         System.out.println(topCard.number);
+        System.out.println(savedDraw);
+        if (savedDraw != 0) {
+            if (!input.drawTwo && !input.drawFour) {
+                System.out.println("YEEEEEEEETTTTTT");
+                drawPlayer(0, players, topCard, main, true);
+//                gameStep(players, e, topCard, main);
+                return false;
+            }
+        }
+
         if (input.colorChange) {
             changingColor = true;
             System.out.println("color changing");
@@ -27,37 +36,69 @@ public class GameLogic {
         } else if (input.isWild) {
             changingColor = true;
             if (input.drawFour) {
-                drawPlayer(4, players, main);
+                savedDraw += 4;
+                drawing = true;
+//                drawPlayer(4, players, topCard, main, false);
             }
             System.out.println("wild thing");
             return true;
         } else if (input.color.equals(topCard.color)) {
+            System.out.println("color");
             if (input.drawTwo) {
                 System.out.println("drawtwo");
-                drawPlayer(2, players, main);
-            }
-            if (input.reverse) {
+                savedDraw += 2;
+                drawing = true;
+//                drawPlayer(2, players, topCard, main, false);
+            } else if (input.reverse) {
                 System.out.println("reverse");
                 reverseDirection();
-            }
-            if (input.skip) {
+            } else if (input.skip) {
                 System.out.println("skip");
                 skipPlayer();
             }
             return true;
-
         } else if (input.number == topCard.number && input.number != -1) {
             System.out.println("number");
             return true;
+        } else {
+            if (input.drawTwo && topCard.drawTwo) {
+                System.out.println("drawtwo");
+                savedDraw += 2;
+                drawing = true;
+//                drawPlayer(2, players, topCard, main, false);
+                return true;
+            } else if (input.reverse && topCard.reverse) {
+                System.out.println("reverse");
+                reverseDirection();
+                return true;
+            } else if (input.skip && topCard.skip) {
+                System.out.println("skip");
+                skipPlayer();
+                return true;
+            }
         }
         return false;
     }
 
-    public void drawPlayer(int num, ArrayList<Player> players, Main main) {
+    public void drawPlayer(int num, ArrayList<Player> players, Card topCard, Main main, boolean override) {
         for (Player player : players) {
-            if (player.getPos() == 2) {
-                for (int i = 0; i < num; i++) {
-                    player.drawCard(main.drawCard());
+            if (player.getPos() == 1) {
+                boolean hasDrawTwo = false;
+                for (Card c : player.getCards()) {
+                    if (c.drawTwo && c.color.equals(topCard.color)) {
+                        hasDrawTwo = true;
+                        break;
+                    }
+                }
+                savedDraw += num;
+                if ((!hasDrawTwo && savedDraw != 0) || override) {
+                    JOptionPane.showMessageDialog(main,
+                            "Drawing " + savedDraw);
+                    for (int i = 0; i < savedDraw; i++) {
+                        player.drawCard(main.drawCard());
+                    }
+                    savedDraw = 0;
+                    drawing = false;
                 }
             }
         }
@@ -91,6 +132,13 @@ public class GameLogic {
             g2.drawRect(724, 449, 100, 80);
             g2.drawRect(872, 449, 100, 80);
         }
+
+        if (drawing) {
+            if (savedDraw != 0) {
+                g2.setColor(Color.black);
+                g2.drawString("Cards to Draw : " + savedDraw, 20, 50);
+            }
+        }
     }
 
     public String containsButton(Point p) {
@@ -114,7 +162,8 @@ public class GameLogic {
         } return null;
     }
 
-    public void rotPlayers(ArrayList<Player> players){
+    public void rotPlayers(ArrayList<Player> players, Card topCard, Main main) {
+        System.out.println("SKIPPPPPP   " + skip);
         for (Player player : players) {
             int newPos = player.getPos();
             if (reverse) {
@@ -122,20 +171,36 @@ public class GameLogic {
                     newPos--;
                     if (newPos < 1)
                         newPos = players.size();
-                    reverse = false;
-                } else {
-                    reverse = false;
                 }
             } else if (skip) {
-                newPos+=2;
-                if (newPos > players.size())
-                    newPos = 1;
+                if (players.size() > 2) {
+                    newPos += 2;
+                    if (newPos > players.size())
+                        newPos = 1;
+                }
             } else {
                 newPos++;
                 if (newPos > players.size())
                     newPos = 1;
             }
+
             player.setPosition(newPos);
         }
+        skip = false;
+        reverse = false;
+        drawPlayer(0, players, topCard, main, false);
+    }
+
+    public String gameStep(ArrayList<Player> players, MouseEvent e, Card topCard, Main main) {
+        if (changingColor) {
+            String str = containsButton(new Point(e.getX(), e.getY()));
+            if (str != null) {
+                rotPlayers(players, topCard, main);
+            }
+            return str;
+        } else {
+            rotPlayers(players, topCard, main);
+        }
+        return null;
     }
 }

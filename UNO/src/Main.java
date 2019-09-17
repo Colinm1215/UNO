@@ -175,10 +175,10 @@ public class Main extends JPanel {
 
                 if (moveButton.rect.contains(e.getX(), e.getY())) {
                     if (selectedCard != null) {
-                        if (gameLogic.cardCheck(selectedCard, discardPile.get(discardPile.size()-1), players, main)) {
+                        if (gameLogic.cardCheck(selectedCard, discardPile.get(discardPile.size() - 1), players, main, e)) {
                             selectedCard = curPlayer.sendCard();
                             discardPile.add(selectedCard);
-                            gameLogic.rotPlayers(players);
+                            gameLogic.gameStep(players, e, discardPile.get(discardPile.size() - 1), main);
                         }
                     }
 
@@ -187,10 +187,13 @@ public class Main extends JPanel {
                         moveButton.hover = false;
                 }
 
-                if (discardPile.get(discardPile.size()-1).colorChange || discardPile.get(discardPile.size()-1).isWild) {
-                    String str = gameLogic.containsButton(new Point(e.getX(), e.getY()));
-                    if (str != null)
-                        discardPile.get(discardPile.size()-1).changeColor(str);
+                if (discardPile.get(discardPile.size() - 1).colorChange || discardPile.get(discardPile.size() - 1).isWild) {
+                    if (gameLogic.changingColor) {
+                        String str = gameLogic.gameStep(players, e, discardPile.get(discardPile.size() - 1), main);
+                        System.out.println(str);
+                        if (str != null)
+                            discardPile.get(discardPile.size() - 1).changeColor(str);
+                    }
                 }
             }
 
@@ -243,6 +246,8 @@ public class Main extends JPanel {
             }
         }
 
+        discardPile.add(drawCard());
+
         for (int i = 0; i < 2; i++) {
             drawPile.add(new Card("green_picker.png"));
             drawPile.add(new Card("red_picker.png"));
@@ -259,7 +264,6 @@ public class Main extends JPanel {
             drawPile.add(new Card("blue_skip.png"));
             drawPile.add(new Card("yellow_skip.png"));
         }
-        discardPile.add(drawCard());
         for (int i = 0; i < 4; i++) {
             drawPile.add(new Card("wild_color_changer.png"));
             drawPile.add(new Card("wild_pick_four.png"));
@@ -279,7 +283,7 @@ public class Main extends JPanel {
 //                break;
 //            }
 //        }
-        int start = 720 - (((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) * 3) / 4);
+        int start = 369;
         int index = -1;
         ArrayList<Card> cards = curPlayer.getCards();
         int width = ((Main.CARDWIDTH / 4) * 13);
@@ -287,22 +291,24 @@ public class Main extends JPanel {
         int cardW = Main.CARDWIDTH / 4;
         if (cards.size() < 14)
             cardNum = cards.size();
-        if (cards.size() < 7)
-            cardNum = 7;
         if (cardNum - 1 > 0)
             cardW = width / (cardNum - 1);
         if (cardW > Main.CARDWIDTH / 4 || cardNum - 1 <= 0)
             cardW = Main.CARDWIDTH / 4;
 
         if (y > Main.HEIGHT - 180) {
-            if (x > start && x < start + (cardW * cards.size())) {
+            if (x >= start && x <= start + (cardW * cardNum)) {
                 index = (x - start) / cardW;
-                if (index >= curPlayer.getCards().size())
+                if (index >= cardNum)
                     index = curPlayer.getCards().size() - 1;
                 else if (index < 0)
                     index = 0;
-            } else if (x > start + (cardW * cards.size()) && x < 720 + Main.CARDWIDTH) {
-                index = curPlayer.getCards().size() - 1;
+            } else if (x >= start + (cardW * cardNum) && x <= (start + (cardW * cardNum)) + Main.CARDWIDTH - cardW) {
+                if (cardNum < 14) {
+                    index = cards.size() - 1;
+                } else {
+                    index = 13;
+                }
             }
         }
         curPlayer.setHighlightIndex(index);
