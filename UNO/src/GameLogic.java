@@ -29,11 +29,7 @@ public class GameLogic {
             }
         }
 
-        if (input.colorChange) {
-            changingColor = true;
-            System.out.println("color changing");
-            return true;
-        } else if (input.isWild) {
+        if (input.isWild) {
             changingColor = true;
             if (input.drawFour) {
                 savedDraw += 4;

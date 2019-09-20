@@ -49,26 +49,21 @@ public class Card {
                 }
             } else {
                 String secondVal = vals[1];
-                switch (secondVal) {
-                    case "pick":
-                        drawFour = true;
-                        break;
-                    case "color":
-                        colorChange = true;
-                        break;
-                }
+                if (secondVal.equals("pick"))
+                    drawFour = true;
+                colorChange = true;
             }
         }
     }
 
     public void changeColor(String color) {
         if (color != null) {
-            if (this.color.equals("wild") && colorChange) {
+            if (isWild && colorChange) {
                 this.color = color;
                 this.number = 0;
                 this.isWild = false;
                 this.colorChange = false;
-                this.drawFour = false;
+//                this.drawFour = false;
                 colorChange = false;
                 try {
                     File imageFile = new File("UNO/Res/" + color + "_0.png");
