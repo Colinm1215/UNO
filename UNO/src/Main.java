@@ -246,11 +246,10 @@ public class Main extends JPanel {
             drawPile.add(new Card("wild_color_changer.png"));
             drawPile.add(new Card("wild_pick_four.png"));
         }
-
     }
 
     public Card drawCard() {
-        return drawPile.get((int)(Math.random() * drawPile.size()));
+        return drawPile.remove((int)(Math.random() * drawPile.size()));
     }
 
     public void highlightCard(int x, int y, Player curPlayer) {
@@ -292,4 +291,7 @@ public class Main extends JPanel {
         curPlayer.setHighlightIndex(index);
     }
 }
+
+
+
 

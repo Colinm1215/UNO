@@ -101,7 +101,7 @@ public class GameLogic {
     }
 
     public void reverseDirection() {
-        reverse = true;
+        reverse = !reverse;
     }
 
     public void skipPlayer() {
@@ -159,7 +159,6 @@ public class GameLogic {
     }
 
     public void rotPlayers(ArrayList<Player> players, Card topCard, Main main) {
-        System.out.println("SKIPPPPPP   " + skip);
         for (Player player : players) {
             int newPos = player.getPos();
             if (reverse) {
@@ -169,10 +168,11 @@ public class GameLogic {
                         newPos = players.size();
                 }
             } else if (skip) {
+                System.out.println("SKIPPPPPP   " + skip);
                 if (players.size() > 2) {
-                    newPos += 2;
+                    newPos += 2; // 1 -> 3 2 -> 4 3 -> 5// 4 -> 6
                     if (newPos > players.size())
-                        newPos = 1;
+                        newPos = newPos - players.size();
                 }
             } else {
                 newPos++;
@@ -181,10 +181,9 @@ public class GameLogic {
             }
 
             player.setPosition(newPos);
+            drawPlayer(0, players, topCard, main, false);
         }
         skip = false;
-        reverse = false;
-        drawPlayer(0, players, topCard, main, false);
     }
 
     public String gameStep(ArrayList<Player> players, MouseEvent e, Card topCard, Main main) {
@@ -200,3 +199,128 @@ public class GameLogic {
         return null;
     }
 }
+
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
+// bob
