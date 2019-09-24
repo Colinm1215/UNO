@@ -16,7 +16,6 @@ public class Card {
     boolean isWild = false;
 
     Card(String pictureName) {
-//        this.image = image;
         try {
             File imageFile = new File("UNO/Res/" + pictureName);
             this.image = ImageIO.read(imageFile);
@@ -63,7 +62,7 @@ public class Card {
                 this.number = 0;
                 this.isWild = false;
                 this.colorChange = false;
-//                this.drawFour = false;
+                this.drawFour = false;
                 colorChange = false;
                 try {
                     File imageFile = new File("UNO/Res/" + color + "_0.png");

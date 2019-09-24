@@ -17,9 +17,11 @@ public class Player {
     int selectionIndex = -1;
     Image playerImage = null;
     boolean showCards = false;
+    int playerNum = 0;
 
 
-    Player(String n, int pos, ArrayList<Card> cds) {
+    Player(String n, int pos, ArrayList<Card> cds, int playerNum) {
+        this.playerNum = playerNum;
         cards.addAll(cds);
         name = n;
         setPosition(pos);
@@ -89,23 +91,73 @@ public class Player {
     public void setPosition(int pos) {
         this.pos = pos;
         showCards = false;
-        switch (pos) {
-            case 1:
-                cardsPosition = new Point(720, Main.HEIGHT - 180);
-                identifierPosition = new Point(720 + ((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) / 4) + 10, Main.HEIGHT - 180);
-                break;
-            case 2:
-                cardsPosition = new Point(720, 20);
-                identifierPosition = new Point(720 + ((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) / 4) + 10, 20);
-                break;
-            case 3:
-                cardsPosition = new Point((((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) * 3) / 4) + 10, Main.HEIGHT / 2 - Main.CARDHEIGHT / 2);
-                identifierPosition = new Point(10, Main.HEIGHT / 2 + Main.CARDHEIGHT / 2 + 10);
-                break;
-            case 4:
-                cardsPosition = new Point(Main.WIDTH - (((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) / 4) + 10), Main.HEIGHT / 2 - Main.CARDHEIGHT / 2);
-                identifierPosition = new Point(Main.WIDTH - 220, Main.HEIGHT / 2 + Main.CARDHEIGHT / 2 + 10);
-                break;
+        if (playerNum == 2) {
+            switch (pos) {
+                case 1:
+                    cardsPosition = new Point(720, Main.HEIGHT - 180);
+                    identifierPosition = new Point(720 + ((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) / 4) + 10, Main.HEIGHT - 180);
+                    break;
+                case 2:
+                    cardsPosition = new Point(720, 20);
+                    identifierPosition = new Point(720 + ((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) / 4) + 10, 20);
+                    break;
+//                case 3:
+//                    cardsPosition = new Point((((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) * 3) / 4) + 10, Main.HEIGHT / 2 - Main.CARDHEIGHT / 2);
+//                    identifierPosition = new Point(10, Main.HEIGHT / 2 + Main.CARDHEIGHT / 2 + 10);
+//                    break;
+//                case 4:
+//                    cardsPosition = new Point(Main.WIDTH - (((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) / 4) + 10), Main.HEIGHT / 2 - Main.CARDHEIGHT / 2);
+//                    identifierPosition = new Point(Main.WIDTH - 220, Main.HEIGHT / 2 + Main.CARDHEIGHT / 2 + 10);
+//                    break;
+            }
+        } else if (playerNum == 3) {
+            switch (pos) {
+                case 1:
+                    cardsPosition = new Point(720, Main.HEIGHT - 180);
+                    identifierPosition = new Point(720 + ((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) / 4) + 10, Main.HEIGHT - 180);
+                    break;
+                case 2:
+                    cardsPosition = new Point((((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) * 3) / 4) + 10, Main.HEIGHT / 2 - Main.CARDHEIGHT / 2);
+                    identifierPosition = new Point(10, Main.HEIGHT / 2 + Main.CARDHEIGHT / 2 + 10);
+//                    cardsPosition = new Point(720, 20);
+//                    identifierPosition = new Point(720 + ((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) / 4) + 10, 20);
+                    break;
+                case 3:
+                    cardsPosition = new Point(Main.WIDTH - (((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) / 4) + 10), Main.HEIGHT / 2 - Main.CARDHEIGHT / 2);
+                    identifierPosition = new Point(Main.WIDTH - 220, Main.HEIGHT / 2 + Main.CARDHEIGHT / 2 + 10);
+//                    cardsPosition = new Point((((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) * 3) / 4) + 10, Main.HEIGHT / 2 - Main.CARDHEIGHT / 2);
+//                    identifierPosition = new Point(10, Main.HEIGHT / 2 + Main.CARDHEIGHT / 2 + 10);
+                    break;
+//                case 4:
+//                    cardsPosition = new Point(Main.WIDTH - (((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) / 4) + 10), Main.HEIGHT / 2 - Main.CARDHEIGHT / 2);
+//                    identifierPosition = new Point(Main.WIDTH - 220, Main.HEIGHT / 2 + Main.CARDHEIGHT / 2 + 10);
+//                    break;
+            }
+        } else {
+            switch (pos) {
+                case 1:
+                    cardsPosition = new Point(720, Main.HEIGHT - 180);
+                    identifierPosition = new Point(720 + ((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) / 4) + 10, Main.HEIGHT - 180);
+                    break;
+                case 2:
+                    cardsPosition = new Point((((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) * 3) / 4) + 10, Main.HEIGHT / 2 - Main.CARDHEIGHT / 2);
+                    identifierPosition = new Point(10, Main.HEIGHT / 2 + Main.CARDHEIGHT / 2 + 10);
+//                    cardsPosition = new Point(720, 20);
+//                    identifierPosition = new Point(720 + ((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) / 4) + 10, 20);
+                    break;
+                case 3:
+                    cardsPosition = new Point(720, 20);
+                    identifierPosition = new Point(720 + ((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) / 4) + 10, 20);
+//                    cardsPosition = new Point(Main.WIDTH - (((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) / 4) + 10), Main.HEIGHT / 2 - Main.CARDHEIGHT / 2);
+//                    identifierPosition = new Point(Main.WIDTH - 220, Main.HEIGHT / 2 + Main.CARDHEIGHT / 2 + 10);
+//                    cardsPosition = new Point((((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) * 3) / 4) + 10, Main.HEIGHT / 2 - Main.CARDHEIGHT / 2);
+//                    identifierPosition = new Point(10, Main.HEIGHT / 2 + Main.CARDHEIGHT / 2 + 10);
+                    break;
+                case 4:
+                    cardsPosition = new Point(Main.WIDTH - (((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) / 4) + 10), Main.HEIGHT / 2 - Main.CARDHEIGHT / 2);
+                    identifierPosition = new Point(Main.WIDTH, Main.HEIGHT / 2 + Main.CARDHEIGHT / 2 + 10);
+                    break;
+            }
         }
     }
 
@@ -113,6 +165,9 @@ public class Player {
         g2.setColor(Color.BLACK);
         g2.setFont(new Font("serif", Font.PLAIN, 40));
 //        g2.fillRect(identifierPosition.x + 110, identifierPosition.y, 100, Main.CARDHEIGHT);
+        if (pos == 4) {
+            identifierPosition.x = Main.WIDTH - (210 + 50 + g2.getFontMetrics().stringWidth(Integer.toString(cards.size())));
+        }
         if (playerImage == null) {
             g2.fillRect(identifierPosition.x, identifierPosition.y, 200, Main.CARDHEIGHT);
             g2.setColor(Color.white);
@@ -121,6 +176,7 @@ public class Player {
         else {
             g2.drawImage(playerImage, identifierPosition.x, identifierPosition.y, 200, Main.CARDHEIGHT, imageObserver);
         }
+        System.out.println(g2.getFontMetrics().stringWidth(Integer.toString(cards.size())));
         g2.setColor(Color.BLACK);
         g2.setFont(new Font("serif", Font.PLAIN, 40));
         g2.drawString(Integer.toString(cards.size()), identifierPosition.x + 210 + 25, identifierPosition.y + (Main.CARDHEIGHT / 2));

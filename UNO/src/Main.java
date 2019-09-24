@@ -12,7 +12,6 @@ public class Main extends JPanel {
     public static final int PILEY = 325;
     public static final int DRAWX = 720;
     public static final int DISCARDX = 715 - 115;
-    ArrayList<String> colors = new ArrayList<>();
     public static final int CARDWIDTH = 110;
     public static final int CARDHEIGHT = 150;
     ArrayList<Card> drawPile = new ArrayList<>();
@@ -28,29 +27,7 @@ public class Main extends JPanel {
 
 
     public Main() {
-        colors.add("red");
-        colors.add("blue");
-        colors.add("green");
-        colors.add("yellow");
-        colors.add("wild");
         createCards();
-//        try (Stream<Path> walk = Files.walk(Paths.get("UNO/Res/"))) {
-//
-//            java.util.List<String> result = walk.map(Path::toString)
-//                    .filter(f -> f.endsWith(".png")).collect(Collectors.toList());
-//
-//            for (String path : result) {
-//                File newFile = new File(path);
-//                String[] fls = newFile.getName().split("_");
-//                if (colors.contains(fls[0])) {
-//                    BufferedImage nextImage = ImageIO.read(newFile);
-//                    drawPile.add(new Card(newFile.getName(), nextImage));
-//                }
-//            }
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
         String[] choices = {"1", "2", "3", "4"};
         String input = (String) JOptionPane.showInputDialog(null, "Choose now...",
                 "The Choice of a Lifetime", JOptionPane.QUESTION_MESSAGE, null, // Use
@@ -65,9 +42,10 @@ public class Main extends JPanel {
                 Card card = drawCard();
                 cardsTemp.add(card);
             }
-            players.add(new Player("Player " + curPos, curPos, cardsTemp));
+            players.add(new Player("Player " + curPos, curPos, cardsTemp, Integer.parseInt(input)));
             curPos++;
         }
+        pictureTaker.webcam.close();
         timer = new Timer(1000 / 60, e -> update());
         timer.start();
         setKeyListener();
