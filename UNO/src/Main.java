@@ -14,8 +14,8 @@ public class Main extends JPanel {
     public static final int DISCARDX = 715 - 115;
     public static final int CARDWIDTH = 110;
     public static final int CARDHEIGHT = 150;
-    ArrayList<Card> drawPile = new ArrayList<>();
-    ArrayList<Card> discardPile = new ArrayList<>();
+    private ArrayList<Card> drawPile = new ArrayList<>();
+    private ArrayList<Card> discardPile = new ArrayList<>();
     ArrayList<Player> players = new ArrayList<>();
     ImageObserver imageObserver = (img, infoflags, x, y, width, height) -> false;
     MoveButton moveButton = new MoveButton();
@@ -26,7 +26,7 @@ public class Main extends JPanel {
     Main main = this;
 
 
-    public Main() {
+    private Main() {
         createCards();
         String[] choices = {"1", "2", "3", "4"};
         String input = (String) JOptionPane.showInputDialog(null, "Choose now...",

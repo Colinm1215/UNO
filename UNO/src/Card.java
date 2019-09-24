@@ -67,7 +67,7 @@ public class Card {
                 try {
                     File imageFile = new File("UNO/Res/" + color + "_0.png");
                     this.image = ImageIO.read(imageFile);
-                } catch (IOException | NullPointerException e) {
+                } catch (IOException | NullPointerException ignored) {
 
                 }
             }
