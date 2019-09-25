@@ -157,6 +157,10 @@ public class Main extends JPanel {
                             selectedCard = curPlayer.sendCard();
                             discardPile.add(selectedCard);
                             gameLogic.gameStep(players, e, discardPile.get(discardPile.size() - 1), main);
+
+                            if (curPlayer.getCards().size() == 0) {
+                                System.out.println("bob");
+                            }
                         }
                     }
 

@@ -162,23 +162,33 @@ public class GameLogic {
         for (Player player : players) {
             int newPos = player.getPos();
             if (reverse) {
-                if (players.size() > 2) {
+                System.out.println("rip");
                     newPos--;
                     if (newPos < 1)
                         newPos = players.size();
-                }
+
             } else if (skip) {
                 System.out.println("SKIPPPPPP   " + skip);
+
                 if (players.size() > 2) {
-                    newPos += 2; // 1 -> 3 2 -> 4 3 -> 5// 4 -> 6
-                    if (newPos > players.size())
-                        newPos = newPos - players.size();
+                    System.out.println("PLAYER SIZE IS GREATER THAN 2");
+                    if (!reverse) {
+                        newPos += 2; // 1 -> 3 2 -> 4 3 -> 5// 4 -> 6
+                        System.out.println("+");
+                    } else if (reverse) {
+                        newPos -= 2;
+                        System.out.println("-");
+                    }
                 }
-            } else {
-                newPos++;
-                if (newPos > players.size())
-                    newPos = 1;
             }
+
+            if (!reverse && !skip) {
+                newPos++;
+            }
+            if (newPos > players.size())
+                newPos = newPos - players.size();
+            if (newPos < 1)
+                newPos = players.size();
 
             player.setPosition(newPos);
             drawPlayer(0, players, topCard, main, false);

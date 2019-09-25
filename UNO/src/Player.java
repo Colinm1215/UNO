@@ -176,7 +176,7 @@ public class Player {
         else {
             g2.drawImage(playerImage, identifierPosition.x, identifierPosition.y, 200, Main.CARDHEIGHT, imageObserver);
         }
-        System.out.println(g2.getFontMetrics().stringWidth(Integer.toString(cards.size())));
+//        System.out.println(g2.getFontMetrics().stringWidth(Integer.toString(cards.size())));
         g2.setColor(Color.BLACK);
         g2.setFont(new Font("serif", Font.PLAIN, 40));
         g2.drawString(Integer.toString(cards.size()), identifierPosition.x + 210 + 25, identifierPosition.y + (Main.CARDHEIGHT / 2));
@@ -204,7 +204,7 @@ public class Player {
 //        cardsPosition.x+Main.CARDWIDTH
         for (int x = cardsPosition.x - (((((Main.CARDWIDTH / 4) * 13) + Main.CARDWIDTH) * 3) / 4); x <= cardsPosition.x + (cardW * cards.size()); x += cardW) {
             Image image;
-            if (pos == 1 && showCards)
+            if (pos == 1 && showCards && cards.size() > 0)
                 image = cards.get(i).image;
             else
                 image = cards.get(i).backImage;
