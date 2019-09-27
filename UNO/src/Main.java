@@ -24,6 +24,8 @@ public class Main extends JPanel {
     public static final PictureTaker pictureTaker = new PictureTaker();
     public static final JFrame window = new JFrame();
     Main main = this;
+    private Player winner;
+    private boolean gameOver = false;
 
 
     private Main() {
@@ -88,7 +90,8 @@ public class Main extends JPanel {
         g2.fillRect(0, 0, getWidth(), getHeight());
         g2.setPaint(null);
         for (Player player : players) {
-            player.draw(g2);
+            if (player.getCards().size() > 0)
+                player.draw(g2);
         }
         if (discardPile.size() > 0)
             g2.drawImage(discardPile.get(discardPile.size() - 1).image, DISCARDX, PILEY, CARDWIDTH, CARDHEIGHT, imageObserver);
@@ -97,6 +100,13 @@ public class Main extends JPanel {
         moveButton.draw(g2);
 
         gameLogic.draw(g2);
+
+        if (gameOver) {
+            g2.setColor(new Color(40, 40, 40));
+            g2.fillRect(400, 300, 600, 200);
+            g2.setColor(Color.WHITE);
+            g2.drawString("" + winner.getName() + " wins the game",500, 380 );
+        }
     }
 
     public void setKeyListener() {
@@ -159,15 +169,20 @@ public class Main extends JPanel {
                             gameLogic.gameStep(players, e, discardPile.get(discardPile.size() - 1), main);
 
                             if (curPlayer.getCards().size() == 0) {
-                                System.out.println("bob");
+                                winner = curPlayer;
+                                gameOver = true;
                             }
                         }
                     }
+
 
                     moveButton.clicked = true;
                     if (moveButton.hover)
                         moveButton.hover = false;
                 }
+
+                if (drawPile.size() == 0)
+                    shuffle();
 
                 if (discardPile.get(discardPile.size() - 1).colorChange || discardPile.get(discardPile.size() - 1).isWild) {
                     if (gameLogic.changingColor) {
@@ -254,6 +269,32 @@ public class Main extends JPanel {
 
     public Card drawCard() {
         return drawPile.remove((int)(Math.random() * drawPile.size()));
+    }
+
+    public void shuffle() {
+        ArrayList<Card> temp = new ArrayList<>();
+        for (int i = 0; i < discardPile.size() - 1; i++) {                  // sets temp list = to discardpile -1 (so top card doesnt change)
+            temp.add(i, discardPile.get(i));
+        }
+
+        for (int d = 0; d < 3; d++) {                                        // randomize location of cards.
+            for (int i = 0; i < discardPile.size() - 1; i++) {
+                Card tempCard = discardPile.get(i);
+                int r = (int)(Math.random()*temp.size());
+                Card tempCard2 = discardPile.get(r);
+                temp.set(r, tempCard);                              // puts the card i in a random place
+                temp.set(i, tempCard2);                             // puts whatever was in that random place in the first place
+            }
+        }
+
+        for (int i = 0; i < discardPile.size() - 1; i++) { // removes all the cards excpet top form discard pile
+            discardPile.remove(i);
+        }
+        for (int i = 0; i < temp.size(); i++) { // supossed to set drawpile = to the randomized temp list.
+            drawPile.addAll(temp);
+
+        }
+
     }
 
     public void highlightCard(int x, int y, Player curPlayer) {
